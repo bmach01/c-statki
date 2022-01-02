@@ -1,0 +1,25 @@
+			INSTRUKCJA
+===========================================================
+Aby rozpoczac gre, nalezy wybrac jeden z dwoch trybow - 
+gracz przeciwko graczowi, lub gracz przeciwko komputerowi.
+
+Aby rozstawic swoje statki, nalezy podac koordynat skraju
+statku, a nastepnie wybrac jeden z podanych kierunkow, w
+ktorych strone zostanie zbudowany statek.
+
+Aby strzelic, nalezy podac wybrane przez siebie koordynaty
+w tym samym formacie co przy budowie floty.
+
+Wygrywa gracz, ktory pierwszy pozbedzie sie statkow przeci-
+wnika.
+
+Legenda:
+	1 - statek
+	2 - pole dostepne (tylko przy budowie statkow)
+       -1 - <przy budowie> pole zablokowane
+       -1 - <w grze> pole ze zniszczonym fragmentem statku
+	3 - nietrafiony strzal
+
+Domyslnie komputer ustawiony jest na "sredni" poziom tru-
+dnosci (nie liczy gdzie strzelac, ale skutecznie tropi
+trafiony raz statek).
