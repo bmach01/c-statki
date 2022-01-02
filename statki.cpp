@@ -1,9 +1,10 @@
 ﻿#include <iostream>
-#include <cstring>
+#include <string>
 #include <windows.h>
 #include <random>
 #include <ctime>
 #include <stdlib.h>
+#include <fstream>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ struct gracz {
 	void zbudujstatek(int x, int y, int numer_statku, int rodzaj);	//Obsluguje budowe statku
 	void strzelaj(int x, int y); //Obsluguje strzelanie
 	bool zyje(); //Sprawdza czy zyje
-	
+
 };
 struct komputer : gracz {
 	bool goni = false;		// |
@@ -69,7 +70,9 @@ int main() {
 void menu() {
 	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	char wybor{};
+	string wybor{};
+	string linia{};
+	ifstream Plik("instrukcja.txt");
 
 	SetConsoleTextAttribute(hConsole, 3);
 	cout << R"( _______ _________ _______ _________ _       _________
@@ -95,7 +98,7 @@ void menu() {
 	cout << " " << "4. Wyjdz\n";
 	SetConsoleTextAttribute(hConsole, 15);
 	cin >> wybor;
-	switch (wybor) {
+	switch (wybor[0]) {
 	case '1':
 		system("cls");
 		gracz1.przeciwnik = &gracz2;
@@ -110,7 +113,13 @@ void menu() {
 		break;
 	case '3':
 		system("cls");
-		//instrukcja
+		while (getline(Plik, linia)) {
+			cout << linia << "\n";
+		}
+		Plik.close();
+		system("pause");
+		system("cls");
+		menu();
 		break;
 	case '4':
 		exit(0);
@@ -289,7 +298,6 @@ void czlowiek::rozdaj() {
 			cout << rodzaj_statku << ":" << 5 - ilosc << " " << "Podaj pole na statek (np.: A4)\n";
 			cin >> wspolrzedne;
 			system("cls");
-
 			//Sprawdza pierwsza wspolrzedna
 			if (wspolrzedne[0] > 90) {
 				wspolrzedne[0] -= 32;
@@ -302,7 +310,6 @@ void czlowiek::rozdaj() {
 				ilosc++;
 				continue;
 			}
-
 			//Sprawdza druga wspolrzedna
 			if (wspolrzedne[1] <= 57 && wspolrzedne[1] >= 49 && (wspolrzedne[2] == 0 || wspolrzedne[2] == 48)) {
 				if (wspolrzedne[1] == '1' && wspolrzedne[2] == 48) {
@@ -323,7 +330,6 @@ void czlowiek::rozdaj() {
 				ilosc++;
 				continue;
 			}
-
 			//Sprawdza sciezki
 			if (!sciezki(x, y, numer_statku)) {
 				czysc(2);
@@ -354,7 +360,7 @@ void komputer::zbudujflote() {
 	mt19937 generator(time(nullptr));
 	uniform_int_distribution<int> planszowa(0, 9);
 	uniform_int_distribution<int> kierunkowa(0, 3);
-	
+
 	for (int rodzaj_statku = 4; rodzaj_statku >= 1; rodzaj_statku--) {
 		for (int ilosc = 5 - rodzaj_statku; ilosc >= 1; ilosc--) {
 			flota[numer_statku].rodzaj = rodzaj_statku;
@@ -389,7 +395,7 @@ void komputer::zbudujflote() {
 void czlowiek::pytajostrzal() {
 	string wspolrzedne;
 	int x{}, y{};
-	bool poprawnekoordy = false;	
+	bool poprawnekoordy = false;
 	while (!poprawnekoordy) {
 		cout << "Wybierz pole do ataku\n";
 		cin >> wspolrzedne;
@@ -413,7 +419,7 @@ void czlowiek::pytajostrzal() {
 			}
 			else {
 				y = 9 - (58 - wspolrzedne[1]);
-			} 
+			}
 		}
 		else {
 			cout << "Bledna druga wspolrzedna\n";
@@ -464,7 +470,9 @@ void gracz::strzelaj(int x, int y) {
 		czytaj(statki);
 		czytaj(atak);
 		aktualna = przeciwnik->mojatura;
-		system("pause");
+		if (comp != przeciwnik) {
+			system("pause");
+		}
 		break;
 	}
 }
@@ -611,7 +619,7 @@ void pvp() {
 	}
 	system("pause");
 	system("cls");
-	main();
+	menu();
 }
 
 void pve() {
@@ -619,17 +627,16 @@ void pve() {
 	komp.zbudujflote();
 	while (gracz1.zyje() && komp.zyje()) {
 		switch (aktualna) {
-			case tura::gracz1:
-				cout.width(10);
-				czytaj(gracz1.statki);
-				czytaj(gracz1.atak);
-				gracz1.pytajostrzal();
-				system("cls");
-				//czytaj(komp.atak);
-				break;
-			case tura::gracz2:
-				komp.pomysl();
-				break;
+		case tura::gracz1:
+			cout.width(10);
+			czytaj(gracz1.statki);
+			czytaj(gracz1.atak);
+			gracz1.pytajostrzal();
+			system("cls");
+			break;
+		case tura::gracz2:
+			komp.pomysl();
+			break;
 		}
 	}
 	if (!gracz1.zyje()) {
@@ -638,4 +645,7 @@ void pve() {
 	else {
 		cout << "\nWYGRALES\n";
 	}
+	system("pause");
+	system("cls");
+	menu();
 }
